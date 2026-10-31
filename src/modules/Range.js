@@ -307,11 +307,14 @@ class Range {
       ) {
         const val = series[i][j]
         if (val !== null && Utils.isNumber(val)) {
-          if (typeof seriesMax[i]?.[j] !== 'undefined') {
+          // A missing OHLC slot is null: a gap, or a line series on a
+          // candlestick chart. `typeof null !== 'undefined'`, and Math.min
+          // coerces null to 0, which pinned the axis at zero (#5407).
+          if (seriesMax[i]?.[j] != null) {
             maxY = Math.max(maxY, seriesMax[i][j])
             lowestY = Math.min(lowestY, seriesMax[i][j])
           }
-          if (typeof seriesMin[i]?.[j] !== 'undefined') {
+          if (seriesMin[i]?.[j] != null) {
             lowestY = Math.min(lowestY, seriesMin[i][j])
             highestY = Math.max(highestY, seriesMin[i][j])
           }

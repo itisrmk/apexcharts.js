@@ -1199,12 +1199,12 @@ export default class Data {
           this.handleFormatXY(ser, i)
         }
 
-        if (
-          cnf.chart.type === 'candlestick' ||
-          ser[i].type === 'candlestick' ||
-          cnf.chart.type === 'boxPlot' ||
-          ser[i].type === 'boxPlot'
-        ) {
+        // Only a candle or box series has OHLC. A line overlaid on a
+        // candlestick chart has scalar y; filling its slots with null made
+        // Range's Math.min treat them as 0 and squash the candles (#5407).
+        // A series with no type of its own still follows the chart type.
+        const ohlcType = ser[i].type || cnf.chart.type
+        if (ohlcType === 'candlestick' || ohlcType === 'boxPlot') {
           this.handleCandleStickBoxData(ser, i)
         }
 
